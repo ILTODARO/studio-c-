@@ -1,10 +1,19 @@
 #include <iostream>
 using namespace std;
 
-class Passeggero{
+class Persona{
     private:
     string  name, cogn;
     int     eta;
+
+    public:
+    Passeggero(string nm, string cgn, int et, bool cond=false)
+
+};
+
+
+class Passeggero{
+    
     bool    condizione;
 
     public:
