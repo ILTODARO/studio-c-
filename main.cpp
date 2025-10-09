@@ -1,7 +1,17 @@
 #include <iostream>
 using namespace std;
 
-int main(){
-    cout<<"DioFa";
-    return 0;
+class Passeggero{
+    private:
+
+    public:
+
+}
+
+template <class T>
+class Node_Pass{
+    private:
+    No
+    public:
+
 }
