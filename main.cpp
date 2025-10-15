@@ -82,20 +82,46 @@ class Passeggero: public Persona{
             string get_Id_ticket()              { return id_ticket; }
             bool get_Condizione ()              { return condizione;}
 
+        friend ostream& operator<<(ostream& os, const Passeggero& s) {
+        os << "Nome: " << s.nome << "Cognome: " << s.matricola;
+        return os;
+    }
+
 };
 
 
 template <class T>
 class Node{
     private:
-    T*info;
+    T*obj;
     Node<T>*next;
 
     public:
     Node(T*inf):info(inf),next(nullptr){}
-    
 
+    void     set_Info(T*x){info=x;}
+    T*       get_info(){return info;}
+
+    void     set_next(Node<T>*nx){next=nx;}
+    Node<T>* get_next()          {return next;}
+
+    
 };
+
+template <class T>
+class List{
+    private:
+    Node<T>*pt_head;
+
+    public:
+    List(): pt_head(nullptr)     {}
+    void    set_Head(Node<T>*ptx){pt_head=ptx;  }
+    Node<T>*get_Head()           {return pt_head;}
+
+    void print_list(){
+        
+    }
+}
 
 int main(){
     return 0;
