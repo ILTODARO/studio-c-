@@ -61,32 +61,39 @@ public:
 
 
 
-class Passeggero{
-    
+class Passeggero: public Persona{
+    private:
+    string id_ticket;
     bool    condizione;
 
     public:
-    Passeggero(string nm, string cgn, int et, bool cond=false) :
-            name(nm), cogn(cgn), eta(et), condizione(cond){}
+    Passeggero(string nm, string cgn, int et, string idt,bool cond=false) :
+            Persona(nm,cgn,et)id_ticket(idt),condizione(cond){}
     
             void set_Name       (string nam)    { name= nam;        }
             void set_Cogn       (string cogno)  { cogn=cogno;       }
             void set_Eta        (int x)         { eta=x;            }
+            void set_Id_ticket  (string sx)     { id_ticket=sx;     }
             void set_cond       (bool x)        { condizione=x;     }
 
             string get_Name     ()              { return name;      }
             string get_Cognome  ()              { return cogn;      }
             int    get_Eta      ()              { return eta;       }
+            string get_Id_ticket()              { return id_ticket; }
             bool get_Condizione ()              { return condizione;}
 
 };
 
 
 template <class T>
-class Node_Pass{
+class Node{
     private:
+    T*info;
+    Node<T>*next;
 
     public:
+    Node(T*inf):info(inf),next(nullptr){}
+    
 
 };
 
