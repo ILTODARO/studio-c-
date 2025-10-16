@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 class Persona {
@@ -8,24 +10,21 @@ private:
 
 public:
     // --- Costruttore ---
-    // Inizializza gli attributi della classe con i valori passati come argomenti.
-    Persona(string nm, string cgn, int e) {
+    Persona(const string& nm, const string& cgn, int e) {
         name = nm;
         cogn = cgn;
         eta = e;
     }
 
     // --- Distruttore Virtuale ---
-    // Buona pratica per classi destinate a essere basi per altre classi (ereditarietà).
     virtual ~Persona() {}
 
     // --- Metodi SET ---
-    // Permettono di modificare il valore degli attributi privati dall'esterno.
-    void setName(string nm) {
+    void setName(const string& nm) {
         name = nm;
     }
 
-    void setCogn(string cgn) {
+    void setCogn(const string& cgn) {
         cogn = cgn;
     }
 
@@ -34,8 +33,6 @@ public:
     }
 
     // --- Metodi GET ---
-    // Permettono di leggere il valore degli attributi privati dall'esterno.
-    // 'const' indica che questi metodi non modificano lo stato dell'oggetto.
     string getName() const {
         return name;
     }
@@ -49,16 +46,10 @@ public:
     }
 
     // --- Funzione Virtuale ---
-    // Stampa le informazioni della persona.
-    // 'virtual' permette a questa funzione di essere ridefinita (override)
-    // in eventuali classi derivate.
-    virtual void stampaInformazioni() const {
-        cout << "Nome: " << name << endl;
-        cout << "Cognome: " << cogn << endl;
-        cout << "Eta: " << eta << endl;
+    virtual void stampa_info() const {
+        cout << "Nome: " << name << " Cognome: " << cogn << " Eta: " << eta << endl;
     }
 };
-
 
 
 class Passeggero: public Persona{
@@ -67,45 +58,36 @@ class Passeggero: public Persona{
     bool    condizione;
 
     public:
-    Passeggero(string nm, string cgn, int et, string idt,bool cond=false) :
-            Persona(nm,cgn,et)id_ticket(idt),condizione(cond){}
+    Passeggero(const string& nm, const string& cgn, int et, const string& idt, bool cond=false) :
+            Persona(nm,cgn,et), id_ticket(idt), condizione(cond){}
     
-            void set_Name       (string nam)    { name= nam;        }
-            void set_Cogn       (string cogno)  { cogn=cogno;       }
-            void set_Eta        (int x)         { eta=x;            }
-            void set_Id_ticket  (string sx)     { id_ticket=sx;     }
-            void set_cond       (bool x)        { condizione=x;     }
+    void set_Id_ticket(const string& sx) { id_ticket=sx; }
+    void set_cond(bool x) { condizione=x; }
 
-            string get_Name     ()              { return name;      }
-            string get_Cognome  ()              { return cogn;      }
-            int    get_Eta      ()              { return eta;       }
-            string get_Id_ticket()              { return id_ticket; }
-            bool get_Condizione ()              { return condizione;}
+    string get_Id_ticket() const { return id_ticket; }
+    bool get_Condizione() const { return condizione;}
 
-        friend ostream& operator<<(ostream& os, const Passeggero& s) {
-        os << "Nome: " << s.nome << "Cognome: " << s.matricola;
-        return os;
+    void stampa_info() const override{
+        Persona::stampa_info();
+        cout << "ID Ticket: " << id_ticket << " Condizione: " << condizione << endl;
     }
-
 };
 
 
 template <class T>
 class Node{
     private:
-    T*obj;
+    T*info;
     Node<T>*next;
 
     public:
     Node(T*inf):info(inf),next(nullptr){}
 
-    void     set_Info(T*x){info=x;}
-    T*       get_info(){return info;}
+    void set_Info(T*x){info=x;}
+    T* get_info(){return info;}
 
-    void     set_next(Node<T>*nx){next=nx;}
-    Node<T>* get_next()          {return next;}
-
-    
+    void set_next(Node<T>*nx){next=nx;}
+    Node<T>* get_next(){return next;}
 };
 
 template <class T>
@@ -114,15 +96,86 @@ class List{
     Node<T>*pt_head;
 
     public:
-    List(): pt_head(nullptr)     {}
-    void    set_Head(Node<T>*ptx){pt_head=ptx;  }
-    Node<T>*get_Head()           {return pt_head;}
+    List(): pt_head(nullptr) {}
+    void set_Head(Node<T>*ptx){pt_head=ptx;}
+    Node<T>* get_Head(){return pt_head;}
 
-    void print_list(){
+    void insert_node(T*dt){
+        Node<T>*new_n = new Node<T>(dt);
         
+        if(!pt_head){
+            pt_head=new_n;
+        }else{
+            Node<T>*curr=pt_head;
+            while(curr->get_next() != nullptr){
+                curr=curr->get_next();
+            }
+            curr->set_next(new_n);
+        }
     }
-}
+
+    void delete_n(T*dt){
+        Node<T>*curr = pt_head;
+        Node<T>*prec = nullptr;
+        
+        if(curr){
+            // Caso 1: il nodo da eliminare è la testa
+            if(*(curr->get_info()) == *dt){
+                pt_head = curr->get_next();
+                delete curr;
+                return;
+            }
+            
+            // Caso 2: il nodo è nel mezzo o in coda
+            while(curr != nullptr && *(curr->get_info()) != *dt){
+                prec = curr;
+                curr = curr->get_next();
+            }
+            
+            // Se abbiamo trovato il nodo
+            if(curr != nullptr){
+                prec->set_next(curr->get_next());
+                delete curr;
+            }
+        }else{
+            cout << "Lista vuota" << endl;
+        }
+    }
+    
+    void print_list(){
+        Node<T>*curr = pt_head;
+        while(curr != nullptr){
+            curr->get_info()->stampa_info();
+            curr = curr->get_next();
+        }
+    }
+};
 
 int main(){
+    srand(time(0)); // Inizializza il generatore random
+    
+    // Array di nomi e cognomi random
+    string nomi[] = {"Mario", "Luigi", "Anna", "Sofia", "Marco", "Laura"};
+    string cognomi[] = {"Rossi", "Bianchi", "Verdi", "Neri", "Gialli", "Blu"};
+    
+    List<Passeggero> lista;
+    
+    cout << "=== GENERAZIONE PASSEGGERI RANDOM ===" << endl << endl;
+    
+    // Genera 5 passeggeri random
+    for(int i = 0; i < 5; i++){
+        string nome = nomi[rand() % 6];
+        string cognome = cognomi[rand() % 6];
+        int eta = rand() % 60 + 18; // Età tra 18 e 77
+        string ticket = "TK" + to_string(rand() % 9000 + 1000); // TK1000-TK9999
+        bool condizione = rand() % 2; // true o false random
+        
+        Passeggero* p = new Passeggero(nome, cognome, eta, ticket, condizione);
+        lista.insert_node(p);
+    }
+    
+    cout << "Lista completa:" << endl;
+    lista.print_list();
+    
     return 0;
 }
