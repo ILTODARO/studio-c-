@@ -1,181 +1,182 @@
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
+#include <string>
+#include <cstdlib> // Per srand e rand
+#include <ctime>   // Per time
+
 using namespace std;
 
+// --- CLASSE PERSONA ---
 class Persona {
-private:
+protected:
     string name, cogn;
     int eta;
-
 public:
-    // --- Costruttore ---
-    Persona(const string& nm, const string& cgn, int e) {
-        name = nm;
-        cogn = cgn;
-        eta = e;
-    }
+    Persona(const string& nm, const string& cgn, int e) : name(nm), cogn(cgn), eta(e) {}
+    virtual ~Persona() {} // Distruttore virtuale
 
-    // --- Distruttore Virtuale ---
-    virtual ~Persona() {}
-
-    // --- Metodi SET ---
-    void setName(const string& nm) {
-        name = nm;
-    }
-
-    void setCogn(const string& cgn) {
-        cogn = cgn;
-    }
-
-    void setEta(int e) {
-        eta = e;
-    }
-
-    // --- Metodi GET ---
-    string getName() const {
-        return name;
-    }
-
-    string getCogn() const {
-        return cogn;
-    }
-
-    int getEta() const {
-        return eta;
-    }
-
-    // --- Funzione Virtuale ---
     virtual void stampa_info() const {
-        cout << "Nome: " << name << " Cognome: " << cogn << " Eta: " << eta << endl;
+        cout << "Nome: " << name << " | Cognome: " << cogn << " | Eta: " << eta;
+    }
+
+    bool operator==(const Persona& other) const {
+        return (this->name == other.name && this->cogn == other.cogn);
     }
 };
 
-
-class Passeggero: public Persona{
-    private:
+// --- CLASSE PASSEGGERO ---
+class Passeggero : public Persona {
+private:
     string id_ticket;
-    bool    condizione;
+    bool condizione;
+public:
+    Passeggero(const string& nm, const string& cgn, int et, const string& idt, bool cond = false)
+        : Persona(nm, cgn, et), id_ticket(idt), condizione(cond) {}
 
-    public:
-    Passeggero(const string& nm, const string& cgn, int et, const string& idt, bool cond=false) :
-            Persona(nm,cgn,et), id_ticket(idt), condizione(cond){}
-    
-    void set_Id_ticket(const string& sx) { id_ticket=sx; }
-    void set_cond(bool x) { condizione=x; }
-
-    string get_Id_ticket() const { return id_ticket; }
-    bool get_Condizione() const { return condizione;}
-
-    void stampa_info() const override{
-        Persona::stampa_info();
-        cout << "ID Ticket: " << id_ticket << " Condizione: " << condizione << endl;
+    // CORREZIONE 1: Aggiunto 'override' per chiarezza e sicurezza
+    // CORREZIONE 2: Migliorata la formattazione dell'output
+    void stampa_info() const override {
+        cout << "  -> Passeggero: " << name << " " << cogn 
+             << "\t(Eta: " << eta << ")"
+             << "\tID: " << id_ticket 
+             << "\tStato: " << (condizione ? "Valido" : "Non Valido");
     }
 };
 
-
+// --- CLASSE NODO (TEMPLATE) ---
 template <class T>
-class Node{
-    private:
-    T*info;
-    Node<T>*next;
-
-    public:
-    Node(T*inf):info(inf),next(nullptr){}
-
-    void set_Info(T*x){info=x;}
-    T* get_info(){return info;}
-
-    void set_next(Node<T>*nx){next=nx;}
-    Node<T>* get_next(){return next;}
+class Node {
+private:
+    T* info;
+    Node<T>* next;
+public:
+    Node(T* inf) : info(inf), next(nullptr) {}
+    ~Node() { delete info; } // Gestione memoria corretta
+    T* get_info() { return info; }
+    Node<T>* get_next() { return next; }
+    void set_next(Node<T>* nx) { next = nx; }
 };
 
+// --- CLASSE LISTA (TEMPLATE) ---
 template <class T>
-class List{
-    private:
-    Node<T>*pt_head;
+class List {
+private:
+    Node<T>* pt_head;
+public:
+    List() : pt_head(nullptr) {}
+    ~List() { // Gestione memoria corretta
+        Node<T>* curr = pt_head;
+        while (curr != nullptr) {
+            Node<T>* to_delete = curr;
+            curr = curr->get_next();
+            delete to_delete;
+        }
+    }
 
-    public:
-    List(): pt_head(nullptr) {}
-    void set_Head(Node<T>*ptx){pt_head=ptx;}
-    Node<T>* get_Head(){return pt_head;}
-
-    void insert_node(T*dt){
-        Node<T>*new_n = new Node<T>(dt);
-        
-        if(!pt_head){
-            pt_head=new_n;
-        }else{
-            Node<T>*curr=pt_head;
-            while(curr->get_next() != nullptr){
-                curr=curr->get_next();
+    void insert_node(T* dt) {
+        Node<T>* new_n = new Node<T>(dt);
+        if (!pt_head) {
+            pt_head = new_n;
+        } else {
+            Node<T>* curr = pt_head;
+            while (curr->get_next() != nullptr) {
+                curr = curr->get_next();
             }
             curr->set_next(new_n);
         }
     }
 
-    void delete_n(T*dt){
-        Node<T>*curr = pt_head;
-        Node<T>*prec = nullptr;
-        
-        if(curr){
-            // Caso 1: il nodo da eliminare è la testa
-            if(*(curr->get_info()) == *dt){
-                pt_head = curr->get_next();
-                delete curr;
-                return;
-            }
-            
-            // Caso 2: il nodo è nel mezzo o in coda
-            while(curr != nullptr && *(curr->get_info()) != *dt){
-                prec = curr;
-                curr = curr->get_next();
-            }
-            
-            // Se abbiamo trovato il nodo
-            if(curr != nullptr){
-                prec->set_next(curr->get_next());
-                delete curr;
-            }
-        }else{
-            cout << "Lista vuota" << endl;
+    void print_list() const {
+        Node<T>* curr = pt_head;
+        if (!curr) {
+            cout << "  -> Lista vuota." << endl;
         }
-    }
-    
-    void print_list(){
-        Node<T>*curr = pt_head;
-        while(curr != nullptr){
+        while (curr != nullptr) {
             curr->get_info()->stampa_info();
+            cout << endl; // Aggiunge un a capo dopo ogni elemento stampato
             curr = curr->get_next();
         }
     }
+    
+    int count_nodes() const {
+        int count = 0;
+        Node<T>* curr = pt_head;
+        while (curr != nullptr) {
+            count++;
+            curr = curr->get_next();
+        }
+        return count;
+    }
 };
 
-int main(){
-    srand(time(0)); // Inizializza il generatore random
-    
-    // Array di nomi e cognomi random
-    string nomi[] = {"Mario", "Luigi", "Anna", "Sofia", "Marco", "Laura"};
-    string cognomi[] = {"Rossi", "Bianchi", "Verdi", "Neri", "Gialli", "Blu"};
-    
-    List<Passeggero> lista;
-    
-    cout << "=== GENERAZIONE PASSEGGERI RANDOM ===" << endl << endl;
-    
-    // Genera 5 passeggeri random
-    for(int i = 0; i < 5; i++){
-        string nome = nomi[rand() % 6];
-        string cognome = cognomi[rand() % 6];
-        int eta = rand() % 60 + 18; // Età tra 18 e 77
-        string ticket = "TK" + to_string(rand() % 9000 + 1000); // TK1000-TK9999
-        bool condizione = rand() % 2; // true o false random
-        
-        Passeggero* p = new Passeggero(nome, cognome, eta, ticket, condizione);
-        lista.insert_node(p);
+// --- CLASSE VOLO ---
+class Volo {
+private:
+    string id_fl, ride;
+    List<Passeggero> passeggeri;
+    int post_tot;
+public:
+    Volo(const string& id_f, const string& rid, int tot)
+        : id_fl(id_f), ride(rid), post_tot(tot) {}
+
+    void aggiungi_passeggero(Passeggero* p) {
+        if (get_Post_occ() < post_tot) {
+            passeggeri.insert_node(p);
+        } else {
+            cout << "Volo " << id_fl << " pieno. Impossibile aggiungere passeggero." << endl;
+            delete p;
+        }
+    }
+
+    int get_Post_occ() const { return passeggeri.count_nodes(); }
+    int get_Post_lib() const { return post_tot - get_Post_occ(); }
+    string get_Id_fl() const { return id_fl; }
+
+    // CORREZIONE 2: Migliorata la formattazione dell'output
+    void stampa_info() const {
+        cout << "✈️  Volo: " << id_fl 
+             << "\t\tDestinazione: " << ride 
+             << "\t\tCapienza: (" << get_Post_occ() << "/" << post_tot << ")" << endl;
+        passeggeri.print_list();
+    }
+
+    bool operator==(const Volo& other) const {
+        return this->id_fl == other.id_fl;
+    }
+};
+
+// --- CLASSE AEROPORTO ---
+class aereoporto {
+private:
+    string nome, cod_IATA;
+    List<Volo> lista_voli;
+public:
+    aereoporto(const string& nm, const string& cod) : nome(nm), cod_IATA(cod) {}
+
+    void aggiungi_volo(Volo* v) {
+        lista_voli.insert_node(v);
     }
     
-    cout << "Lista completa:" << endl;
-    lista.print_list();
-    
+    void stampa_voli_programmati() const {
+        cout << "\n=== TABELLONE VOLI PER L'AEROPORTO DI " << nome << " (" << cod_IATA << ") ===" << endl;
+        lista_voli.print_list();
+    }
+};
+
+// --- MAIN ---
+int main() {
+    aereoporto fiumicino("Fiumicino - Leonardo da Vinci", "FCO");
+
+    Volo* voloNY = new Volo("AZ608", "New York", 150);
+    voloNY->aggiungi_passeggero(new Passeggero("Mario", "Rossi", 35, "TK1122", true));
+    voloNY->aggiungi_passeggero(new Passeggero("Laura", "Bianchi", 28, "TK3344", false));
+    fiumicino.aggiungi_volo(voloNY);
+
+    Volo* voloTK = new Volo("JL416", "Tokyo", 200);
+    voloTK->aggiungi_passeggero(new Passeggero("Giuseppe", "Verdi", 52, "TK5566", true));
+    voloTK->aggiungi_passeggero(new Passeggero("Anna", "Neri", 41, "TK7788", true));
+    fiumicino.aggiungi_volo(voloTK);
+
+    fiumicino.stampa_voli_programmati();
+
     return 0;
 }
