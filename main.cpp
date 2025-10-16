@@ -48,10 +48,12 @@ private:
     Node<T>* next;
 public:
     Node(T* inf) : info(inf), next(nullptr) {}
-    ~Node() { delete info; } // Gestione memoria corretta
-    T* get_info() { return info; }
-    Node<T>* get_next() { return next; }
-    void set_next(Node<T>* nx) { next = nx; }
+   ~Node()                      { delete info; } // Gestione memoria corretta
+    
+    T* get_info()               { return info; }
+    Node<T>* get_next()         { return next; }
+    void set_next(Node<T>* nx)  { next = nx;   }
+
 };
 
 // --- CLASSE LISTA (TEMPLATE) ---
@@ -137,9 +139,7 @@ public:
         passeggeri.print_list();
     }
 
-    bool operator==(const Volo& other) const {
-        return this->id_fl == other.id_fl;
-    }
+   
 };
 
 // --- CLASSE AEROPORTO ---
