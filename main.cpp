@@ -18,9 +18,7 @@ public:
         cout << "Nome: " << name << " | Cognome: " << cogn << " | Eta: " << eta;
     }
 
-    bool operator==(const Persona& other) const {
-        return (this->name == other.name && this->cogn == other.cogn);
-    }
+   
 };
 
 // --- CLASSE PASSEGGERO ---
