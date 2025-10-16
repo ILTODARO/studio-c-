@@ -144,10 +144,11 @@ public:
 
 // --- CLASSE AEROPORTO ---
 class aereoporto {
-private:
+    
+    private:
     string nome, cod_IATA;
     List<Volo> lista_voli;
-public:
+    public:
     aereoporto(const string& nm, const string& cod) : nome(nm), cod_IATA(cod) {}
 
     void aggiungi_volo(Volo* v) {
@@ -165,14 +166,14 @@ int main() {
     aereoporto fiumicino("Fiumicino - Leonardo da Vinci", "FCO");
 
     Volo* voloNY = new Volo("AZ608", "New York", 150);
-    voloNY->aggiungi_passeggero(new Passeggero("Mario", "Rossi", 35, "TK1122", true));
-    voloNY->aggiungi_passeggero(new Passeggero("Laura", "Bianchi", 28, "TK3344", false));
-    fiumicino.aggiungi_volo(voloNY);
+        voloNY->aggiungi_passeggero (new Passeggero("Mario", "Rossi", 35, "TK1122", true    )   );
+        voloNY->aggiungi_passeggero (new Passeggero("Laura", "Bianchi", 28, "TK3344", false )   );
+        fiumicino.aggiungi_volo     (voloNY);
 
     Volo* voloTK = new Volo("JL416", "Tokyo", 200);
-    voloTK->aggiungi_passeggero(new Passeggero("Giuseppe", "Verdi", 52, "TK5566", true));
-    voloTK->aggiungi_passeggero(new Passeggero("Anna", "Neri", 41, "TK7788", true));
-    fiumicino.aggiungi_volo(voloTK);
+        voloTK->aggiungi_passeggero (new Passeggero("Giuseppe", "Verdi", 52, "TK5566", true)    );
+        voloTK->aggiungi_passeggero (new Passeggero("Anna", "Neri", 41, "TK7788", true     )    );
+        fiumicino.aggiungi_volo     (voloTK);
 
     fiumicino.stampa_voli_programmati();
 
