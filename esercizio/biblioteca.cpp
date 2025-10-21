@@ -69,13 +69,20 @@ class Node{
     private:
     T*obj;
     Node<T> * next;
+
     public:
-    
+    Node(){}
 };
 
 template<class T>
 class Queue :   public Node {
     private:
+    Node<T>* pt_h;
+
+    public:
+    Queue() :   pt_h(nullptr):
+    
+
     
 };
 
