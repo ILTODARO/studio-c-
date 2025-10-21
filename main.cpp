@@ -118,6 +118,8 @@ public:
     Volo(const string& id_f, const string& rid, int tot)
         : id_fl(id_f), ride(rid), post_tot(tot) {}
 
+    int get_Post_occ() const { return passeggeri.count_nodes(); }
+    
     void aggiungi_passeggero(Passeggero* p) {
         if (get_Post_occ() < post_tot) {
             passeggeri.insert_node(p);
@@ -127,7 +129,7 @@ public:
         }
     }
 
-    int get_Post_occ() const { return passeggeri.count_nodes(); }
+    
     int get_Post_lib() const { return post_tot - get_Post_occ(); }
     string get_Id_fl() const { return id_fl; }
 
@@ -166,13 +168,15 @@ int main() {
     aereoporto fiumicino("Fiumicino - Leonardo da Vinci", "FCO");
 
     Volo* voloNY = new Volo("AZ608", "New York", 150);
-        voloNY->aggiungi_passeggero (new Passeggero("Mario", "Rossi", 35, "TK1122", true    )   );
-        voloNY->aggiungi_passeggero (new Passeggero("Laura", "Bianchi", 28, "TK3344", false )   );
+        voloNY->aggiungi_passeggero (new Passeggero("Mario",    "Rossi",    35, "TK1122",   true));
+        voloNY->aggiungi_passeggero (new Passeggero("Laura",    "Bianchi",  28, "TK3344",   false));
+    
         fiumicino.aggiungi_volo     (voloNY);
 
     Volo* voloTK = new Volo("JL416", "Tokyo", 200);
         voloTK->aggiungi_passeggero (new Passeggero("Giuseppe", "Verdi", 52, "TK5566", true)    );
         voloTK->aggiungi_passeggero (new Passeggero("Anna", "Neri", 41, "TK7788", true     )    );
+        
         fiumicino.aggiungi_volo     (voloTK);
 
     fiumicino.stampa_voli_programmati();
